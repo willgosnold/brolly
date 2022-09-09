@@ -24,22 +24,32 @@ with open('outputfile2.json', 'wb') as outf:
 '''
 
 def parse(response):
-    hourly = response["hourly"]
-    pop = [x["pop"] for x in hourly][:16]
+    daily = response["daily"]
+    week = [x["weather"][0]["main"] for x in daily][:7]
     
-    for i, j in enumerate(pop):
-        if j >= 0.75:
+    for day, weather in enumerate(week):
+        if weather == "Rain":
             # check response weather
-            if hourly[i]["weather"][0]["main"] == "Rain":
-                print(f"In {i+1} hours -- Rain likely! Grab your brolly!")
-            else:
-                print(f"In {i+1} hours -- Looks like it MIGHT rain, but I'm not sure.")
+            print(f"In {day+1} days -- Rain likely! Grab your brolly!")
         else:
-            print(f"In {i+1} hours -- Rain NOT likely!")
-    return pop
+            print(f"In {day+1} days -- Rain NOT likely!")
+    return week
 
 if __name__ == "__main__":
-    with open("outputfile2.json", "r") as f:
-        response = json.load(f)
+    # To test with a template response
 
-    parse(response)
+    with open("outputfile2.json", "r") as f:
+        data = json.load(f)
+
+    # To get actual new data by calling the api
+
+    # API_KEY = config.API_KEY
+    # LAT = config.LAT
+    # LON = config.LON
+
+    # url = f"https://api.openweathermap.org/data/3.0/onecall?lat={LAT}&lon={LON}&appid={API_KEY}"
+
+    # response = requests.get(url)
+    # data = response.json()
+
+    parse(data)
